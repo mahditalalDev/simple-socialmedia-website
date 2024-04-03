@@ -289,11 +289,12 @@ window.addEventListener("scroll",()=>{
   if(endOfPage &&currentpage<=lastPage){
     currentpage++;
     console.log(currentpage)
+    getPostsReguest(currentpage)
+    console.log(currentpage,lastPage)
     setTimeout((
       
     )=>{
-      getPostsReguest(currentpage)
-      console.log(currentpage,lastPage)
+    
     },1000)
     
   }  
