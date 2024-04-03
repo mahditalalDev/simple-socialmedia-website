@@ -1,10 +1,15 @@
 setUpUI();
 
+// TODO[]fix ui code
 function setUpUI() {
   const token = localStorage.getItem("token");
+
   if (token == null) {
     document
       .getElementById("create-post-btn")
+      .style.setProperty("display", "none", "important");
+    document
+      .getElementById("profile-image-nav")
       .style.setProperty("display", "none", "important");
     document.getElementById("logoutBtnNav").style.display = "none";
     document.getElementById("loginbtnnav").style.display = "flex";
@@ -18,10 +23,34 @@ function setUpUI() {
     document
       .getElementById("create-post-btn")
       .style.setProperty("display", "flex", "important");
+    document
+      .getElementById("profile-image-nav")
+      .style.setProperty("display", "flex", "important");
     const registerbtn = document.getElementById("registerbtnnav");
     registerbtn.style.display = "none";
     document.getElementById("logoutBtnNav").style.display = "flex";
     document.getElementById("logoutBtnNav").style.visibility = "visible";
+    fillnav();
+  }
+}
+function isEmptyObject(obj) {
+  // Check if the object is not null or undefined
+  if (obj && typeof obj === "object") {
+    // Check if there are no keys in the object
+    return Object.keys(obj).length === 0;
+  }
+  // If the object is null, undefined, or not an object, it is considered empty
+  return true;
+}
+function fillnav() {
+  let user = getCurrentUser();
+  const username = document.getElementById("usernameNav");
+  username.innerHTML = user.username;
+  const userProfile = document.getElementById("profile-user");
+  let img=user.profile_image
+  console.log(typeof(img))
+  if(typeof(img)!="object"){
+    userProfile.src = `${user.profile_image}`;
   }
 }
 function getPostsReguest() {
@@ -241,4 +270,12 @@ function createNewPostClicked() {
       console.log(error);
     });
   //   close model
+}
+function getCurrentUser() {
+  let user = null;
+  const storageUser = localStorage.getItem("currentUser");
+  if (storageUser != null) {
+    user = JSON.parse(storageUser);
+  }
+  return user;
 }
