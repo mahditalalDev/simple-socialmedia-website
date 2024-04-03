@@ -166,17 +166,22 @@ function registerBtnClicked() {
   let username = document.getElementById("RegisterUsernameInput").value;
   let email = document.getElementById("RegisterEmailInput").value;
   let password = document.getElementById("RegisterPasswordInput").value;
-  console.log(name, username, email, password);
-  //   alert(` username :${username} and password:${password}`);
-  const params = {
-    username: username,
-    password: password,
-    email: email,
-    name: name,
+  let profileImage = document.getElementById("Register-Image-Input").files[0];
+  // form data to send image and the data to api
+  let formData = new FormData();
+  formData.append("name", name);
+  formData.append("username", username);
+  formData.append("email", email);
+  formData.append("password", password);
+  formData.append("image", profileImage);
+  //create a headers to tell the backend we are sending a formdata  not json
+  const header = {
+    "Content-Type": "multipart/form-data",
   };
+
   const url = "https://tarmeezacademy.com/api/v1/register";
   axios
-    .post(url, params)
+    .post(url, formData, { headers: header })
     .then((response) => {
       // let token=response.data.data.token
       let token = response.data.token;
@@ -223,13 +228,15 @@ function createNewPostClicked() {
       const modelInstance = bootstrap.Modal.getInstance(modal);
       modelInstance.hide();
       showAlert("post add done", "success");
-      getPostsReguest()
+      setTimeout(() => {
+        getPostsReguest();
+      }, 800);
     })
     .catch((error) => {
       const modal = document.getElementById("add-post-modal");
       const modelInstance = bootstrap.Modal.getInstance(modal);
       modelInstance.hide();
-      console.log(error)
+      console.log(error);
       showAlert(`${error.response.data.message}`, "danger");
       console.log(error);
     });
