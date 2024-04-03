@@ -1,5 +1,7 @@
 setUpUI();
-
+getPostsReguest();
+let currentpage=1;
+let lastPage=1;
 // TODO[]fix ui code
 function setUpUI() {
   const token = localStorage.getItem("token");
@@ -47,16 +49,17 @@ function fillnav() {
   const username = document.getElementById("usernameNav");
   username.innerHTML = user.username;
   const userProfile = document.getElementById("profile-user");
-  let img=user.profile_image
-  console.log(typeof(img))
-  if(typeof(img)!="object"){
+  let img = user.profile_image;
+  console.log(typeof img);
+  if (typeof img != "object") {
     userProfile.src = `${user.profile_image}`;
   }
 }
-function getPostsReguest() {
+function getPostsReguest(page=1) {
   axios
-    .get("https://tarmeezacademy.com/api/v1/posts?limit=3")
+    .get(`https://tarmeezacademy.com/api/v1/posts?limit=1&page=${page}`)
     .then(function (response) {
+      lastPage=response.data.meta.last_page;
       // handle success
       let postdata = response.data.data;
       console.log(postdata);
@@ -189,7 +192,7 @@ document.getElementById("logoutBtnNav").addEventListener("click", () => {
   showAlert("logout success", "success");
   setUpUI();
 });
-getPostsReguest();
+
 function registerBtnClicked() {
   let name = document.getElementById("RegisterNameInput").value;
   let username = document.getElementById("RegisterUsernameInput").value;
@@ -279,3 +282,19 @@ function getCurrentUser() {
   }
   return user;
 }
+//pagination and infinite scroll
+window.addEventListener("scroll",()=>{
+  const endOfPage=window.innerHeight+window.pageYOffset>=document.body.offsetHeight;
+  
+  if(endOfPage &&currentpage<=lastPage){
+    currentpage++;
+    console.log(currentpage)
+    setTimeout((
+      
+    )=>{
+      getPostsReguest(currentpage)
+      console.log(currentpage,lastPage)
+    },1000)
+    
+  }  
+})
