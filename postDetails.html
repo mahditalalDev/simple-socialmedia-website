@@ -17,16 +17,7 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- add post button -->
-    <div
-      class="btn bg-primary"
-      id="create-post-btn"
-      data-bs-toggle="modal"
-      data-bs-target="#add-post-modal"
-    >
-      +
-    </div>
-
+    <!-- modals -->
     <!-- model login -->
     <div
       class="modal fade"
@@ -76,83 +67,6 @@
             </button>
             <button id="loginbtn" type="button" class="btn btn-primary">
               login
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- modal add post -->
-    <div
-      class="modal fade"
-      id="add-post-modal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Add a new post</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <label for="recipient-name" class="col-form-label"
-                  >title:</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="create-title-input"
-                />
-              </div>
-              <div class="mb-3">
-                <!-- <textarea type="text" class="form-control" id="create-body-input" /> -->
-                <textarea
-                  name="create-body"
-                  id="create-body-input"
-                  style="
-                    width: 100%;
-                    height: 100px;
-                    border-color: grey;
-                    border-radius: 10px;
-                    resize: none;
-                  "
-                ></textarea>
-              </div>
-              <div class="mb-3">
-                <label for="recipient-name" class="col-form-label"
-                  >Image:</label
-                >
-                <input
-                  type="file"
-                  class="form-control"
-                  id="create-image-input"
-                />
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              cancel
-            </button>
-            <button
-              id="createpostbtn"
-              onclick="createNewPostClicked()"
-              type="button"
-              class="btn btn-primary"
-            >
-              Create
             </button>
           </div>
         </div>
@@ -249,7 +163,6 @@
         </div>
       </div>
     </div>
-    <!-- nav bar  -->
     <div class="container mt-4 d-flex justify-content-center">
       <nav
         class="navbar shadow-lg navbar-expand-lg navbar-light bg-light col-9"
@@ -270,7 +183,9 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
+                <a class="nav-link active" aria-current="page" href="index.html"
+                  >Home</a
+                >
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Profile</a>
@@ -329,13 +244,17 @@
       </nav>
     </div>
     <!--/nav barr  -->
-    <!-- posts -->
+    <!-- post -->
 
-    <div id="posts" class="container">
+    <div id="post" class="container">
       <div class="d-flex justify-content-center mt-3">
         <div class="col-9">
-          <div id="postscards">
+          <div id="postcard">
             <div id="success-alert" class="show fade"></div>
+            <div id="" class="show" style="font-size: 1.3rem">
+              <span style="" id="namepost"> name`s </span>
+              post
+            </div>
             <div class="card my-3 shadow-lg">
               <div class="card-header">
                 <img
@@ -364,7 +283,9 @@
                   consequuntur totam non assumenda ea iusto explicabo id?
                 </p>
                 <hr />
+                <!-- comments section -->
                 <div class="d-flex align-items-center">
+                  /
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -387,152 +308,104 @@
         </div>
       </div>
     </div>
-
-    <!-- bootstrap -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"
     ></script>
+
     <script src="main.js"></script>
     <script>
-      let currentpage = 1;
-      let lastPage = 1;
       setUpUI();
-      getPostsReguest();
-      function getPostsReguest(page = 1) {
+      const urlParms = new URLSearchParams(window.location.search);
+      const postId = urlParms.get("postid");
+      getPostData();
+      // getPostData();
+      function getPostData() {
         axios
-          .get(`https://tarmeezacademy.com/api/v1/posts?limit=1&page=${page}`)
+          .get(`https://tarmeezacademy.com/api/v1/posts/${postId}`)
           .then(function (response) {
-            lastPage = response.data.meta.last_page;
-            // handle success
-            let postdata = response.data.data;
-            console.log(postdata);
-            fillPosts(postdata);
+            // let author = response.data.data.author;
+            // console.log(author);
+            // let posttitle = author.title;
+            // let username = author.username;
+            // let name = author.name;
+            // let profileimg = author.profile_image;
+
+            // // handle success
+            // let postdata = response.data.data;
+            // console.log(postdata);
+            fillCurrentPost(response);
+
+            // fillPosts(postdata);
           })
           .catch(function (error) {
             // handle error
             console.log(error);
           });
       }
-      function fillPosts(data) {
-        for (post of data) {
-          let postid = post.id;
-          let content = `<div class="card my-3 shadow-lg">
-        <div class="card-header">
-          <img
-            class="rounded-circle border border-2"
-            style="width: 40px"
-            height="40px"
-            src="${post.author.profile_image}"
-            alt=""
-          />
-          <span class="bold">${post.author.username}</span>
-        </div>
-        <div class="card-body" onclick="postClicked(${postid})" style="cursor:pointer" >
-          <img
-            class="cover"
-            src="${post.image}"
-            alt=""
-            style="width: 100%"
-            height="350px"
-          />
-          <h6 class="mt-1">${post.created_at}</h6>
-          <h5>${post.title}</h5>
-          <p>
-          ${post.body}
-          </p>
-          <hr />
-          <div class="d-flex align-items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-chat-dots"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"
-              />
-              <path
-                d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125m.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2"
-              />
-            </svg>
-          
-            <span>
-            (${post.comments_count}) Comments
-            <span id="post-${postid}">
-            </span>
-            </span>
-          </div>
-        </div>
-        </div> `;
-          const currenttag = `post-${post.id}`;
-          let tagas = ["hello", "testu", "mahdi"];
-          document.getElementById("postscards").innerHTML += content;
-          document.getElementById(`${currenttag}`).innerHTML = ``;
-          for (tag of tagas) {
-            let content = ` <button class="btn btn-sm rounded-3" style="background-color:gray;color:white">
-        ${tag}
-        </button>`;
-            document.getElementById(`${currenttag}`).innerHTML += content;
-          }
-        }
-      }
-      function createNewPostClicked() {
-        const body = document.getElementById("create-body-input").value;
-        const title = document.getElementById("create-title-input").value;
-        const image = document.getElementById("create-image-input").files[0];
-        let formData = new FormData();
-        formData.append("title", title);
-        formData.append("body", body);
-        formData.append("image", image);
-        const token = localStorage.getItem("token");
-        const url = "https://tarmeezacademy.com/api/v1/posts";
-        const header = {
-          "Content-Type": "multipart/form-data",
-          authorization: `Bearer ${token}`,
-        };
-        axios
-          .post(url, formData, {
-            headers: header,
-          })
-          .then((response) => {
-            console.log(response);
-            const modal = document.getElementById("add-post-modal");
-            const modelInstance = bootstrap.Modal.getInstance(modal);
-            modelInstance.hide();
-            showAlert("post add done", "success");
-            setTimeout(() => {
-              getPostsReguest();
-            }, 800);
-          })
-          .catch((error) => {
-            const modal = document.getElementById("add-post-modal");
-            const modelInstance = bootstrap.Modal.getInstance(modal);
-            modelInstance.hide();
-            console.log(error);
-            showAlert(`${error.response.data.message}`, "danger");
-            console.log(error);
-          });
-        //   close model
-      }
-      window.addEventListener("scroll", () => {
-        const endOfPage =
-          window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
-
-        if (endOfPage && currentpage <= lastPage) {
-          currentpage++;
-          console.log(currentpage);
-          getPostsReguest(currentpage);
-          console.log(currentpage, lastPage);
-          setTimeout(() => {}, 1000);
-        }
-      });
-      function postClicked(postid) {
-        
-         window.location=`postDetails.html?postid=${postid}`
+      function fillCurrentPost(response) {
+        responseData = response.data.data;
+        let author = responseData.author;
+        let comments = responseData.comments;
+        let post_image = responseData.image;
+        let post_body = responseData.body;
+        let post_title = responseData.title;
+        let content = `
+            <div id="success-alert" class="show fade"></div>
+            <div id="" class="show" style="font-size: 1.3rem">
+              <span style="" id="namepost"> ${author.name}\`s </span>
+              post
+            </div>
+            <div class="card my-3 shadow-lg">
+              <div class="card-header">
+                <img
+                  class="rounded-circle border border-2"
+                  style="width: 40px"
+                  height="40px"
+                  src='${author.profile_image ||"https://st3.depositphotos.com/15648834/17930/v/450/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"}'
+                  alt=""
+                />
+                <span class="bold">${author.username}</span>
+              </div>
+              <div class="card-body">
+                <img
+                  class="cover"
+                  src="${responseData.image}"
+                  alt=""
+                  style="width: 100%"
+                  height="350px"
+                />
+                <h6 class="mt-1">${responseData.created_at}</h6>
+                <h5>${responseData.title || ""}</h5>
+                <p>
+                ${responseData.body || "This post has no description."}
+                </p>
+                <hr />
+                <!-- comments section -->
+                <div class="d-flex align-items-center">
+                //   comments sections
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-chat-dots"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"
+                    />
+                    <path
+                      d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125m.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          `;
+         document.getElementById("postcard").innerHTML=content
+      
       }
     </script>
   </body>
