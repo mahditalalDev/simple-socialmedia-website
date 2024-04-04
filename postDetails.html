@@ -367,9 +367,18 @@
                 <hr />
                 <!-- comments section -->
                 <h3>All comments :</h3>
-                <div id="CommentHere">
+                <hr>
+                <div id="CommentHere" style="background-color: rgb(211 227 253);">
                  
                 </div>
+                <h2>Leave a comment :</h2>
+                <div id="addNewComment" class="input-group mb-3">
+                    <input id="comment-input" type="text" placeholder="add your comment here.." class="form-control">
+                    <button class="btn btn-outline-primary" onclick="addNewComment()">send</button>
+
+              </div>
+              <div id="success-alert" class="show fade"></div>
+              
                 
               </div>
             </div>
@@ -377,6 +386,33 @@
         document.getElementById("postcard").innerHTML = content;
         console.log(responseData.comments);
         fillComments(responseData.comments);
+      }
+      function addNewComment() {
+        const token = localStorage.getItem("token");
+        const urlParms = new URLSearchParams(window.location.search);
+        const postId = urlParms.get("postid");
+        let commentBody = document.getElementById("comment-input").value;
+        let params = {
+          "body": commentBody
+        }
+        let url = `https://tarmeezacademy.com/api/v1/posts/${postId}/comments`;
+        axios.post(url, params, {
+          headers: {
+            "authorization": `Bearer ${token}`,
+          },
+        }).then((response) => {
+          console.log(response.data);
+          
+          getPostData()
+          showAlert(message,"success")
+        }).catch((error)=>{
+            let message=error.response.data.message
+            // alert(error.response.data.message)
+            showAlert(message,"danger")
+            
+
+
+        })
       }
       function fillComments(comments) {
         const commentsSection = document.getElementById("CommentHere");
@@ -389,7 +425,7 @@
                             align-items: center;
                             padding: 10px 8px;
                             border-radius:0px 50px 50px 0px;
-                            background-color: #cccccc;
+                            
                             "
                             class="gap-3 justify-content-space-evenly"
       
