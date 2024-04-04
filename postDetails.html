@@ -366,6 +366,7 @@
                 </p>
                 <hr />
                 <!-- comments section -->
+                <h3>All comments :</h3>
                 <div id="CommentHere">
                  
                 </div>
@@ -397,12 +398,15 @@
                               class="rounded-circle border border-2"
                               style="width: 60px ;height:60px;align-self: self-start;"
                               
-                              src="${comment.author.profile_image ||'https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg'}"
+                              src="${
+                                comment.author.profile_image ||
+                                "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg"
+                              }"
                               alt=""
                             />
                             <div class="col-9">
                               <h3>@${comment.author.username}</h3>
-                              <h5>${comment.body|| "there is no body"}</h5>
+                              <h5>${comment.body || "there is no body"}</h5>
                     
                               
                             </div>
